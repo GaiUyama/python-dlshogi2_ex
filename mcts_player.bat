@@ -1,2 +1,2 @@
 @echo off
-python -m re.pydlshogi2.player.mcts_player
+python -m pydlshogi2.player.mcts_player
