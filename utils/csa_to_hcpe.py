@@ -15,6 +15,8 @@ parser.add_argument('--filter_rating', type=int, default=3500)
 parser.add_argument('--test_ratio', type=float, default=0.1)
 args = parser.parse_args()
 
+# glob.glob(args.csa_dir/**/*.csa) 
+# **: 同一階層以外のファイルを探す, recursive=True: ファイルを再帰的に探す
 csa_file_list = glob.glob(os.path.join(args.csa_dir, '**', '*.csa'), recursive=True)
 
 # ファイルリストをシャッフル
