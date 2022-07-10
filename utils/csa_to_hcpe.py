@@ -26,20 +26,21 @@ file_list_train, file_list_test = train_test_split(csa_file_list, test_size=args
 hcpes = np.zeros(1024, HuffmanCodedPosAndEval)
 
 # hcpe_train = train.hcpe, hcpe_test = test.hcpe
-# 'wb' = バイナリファイルを書き込みモードで開く
+# 'wb': バイナリファイルを書き込みモードで開く
 f_train = open(args.hcpe_train, 'wb')
 f_test = open(args.hcpe_test, 'wb')
 
 board = Board()
-# zip() : file_list = [file_list_train, file_list_test], f = [f_train, f_test]
+# zip(): file_list = [file_list_train, file_list_test], f = [f_train, f_test]
 for file_list, f in zip([file_list_train, file_list_test], [f_train, f_test]):
     kif_num = 0
     position_num = 0
     for filepath in file_list:
+        # CSA.Parser.parse_file(): CSA形式の棋譜の読み込み
         for kif in CSA.Parser.parse_file(filepath):
             # 投了、千日手、宣言勝ちで終了した棋譜以外を除外
             if kif.endgame not in ('%TORYO', '%SENNICHITE', '%KACHI'):
-                # 処理をスキップ
+                # continue: ループの最初に戻ってやり直す
                 continue
             # 手数が少ない棋譜を除外
             if len(kif.moves) < args.filter_moves:
@@ -51,27 +52,35 @@ for file_list, f in zip([file_list_train, file_list_test], [f_train, f_test]):
             # 開始局面を設定
             board.set_sfen(kif.sfen)
             p = 0
-            # 例外が発生するかもしれないが、実行したい処理
+            # try: 例外が発生するかもしれないが、実行したい処理
             try:
                 # enumerate() : 要素のインデックスと要素を同時に取り出す
+                # moves: 開始局面からの指し手のリスト
+                # scores: 開始局面からの評価値のリスト
+                # comments: 開始局面からの指し手のコメントのリスト
                 for i, (move, score, comment) in enumerate(zip(kif.moves, kif.scores, kif.comments)):
                     # 不正な指し手のある棋譜を除外
+                    # is_legal(move): moveが合法手かチェック。真偽値を返す。
                     if not board.is_legal(move):
+                        # raise: 例外を発生させる (exceptに移動)
                         raise Exception()
                     hcpe = hcpes[p]
                     p += 1
                     # 局面はhcpに変換
+                    # to_hcp(hcp): 現局面を表すhcp形式のndarrayを取得する。引数には、結果を受け取るndarrayを指定する。
                     board.to_hcp(hcpe['hcp'])
                     # 16bitに収まるようにクリッピングする
                     eval = min(32767, max(score, -32767))
                     # 手番側の評価値にする
                     hcpe['eval'] = eval if board.turn == BLACK else -eval
                     # 指し手の32bit数値を16bitに切り捨てる
+                    # move16(move): 32bitのmoveを16bitのmoveに変換する
                     hcpe['bestMove16'] = move16(move)
                     # 勝敗結果
                     hcpe['gameResult'] = kif.win
+                    # push(move): 指し手moveを盤面に適用する
                     board.push(move)
-            # 例外発生：除外対象の棋譜であるとき
+            # except: 例外発生：除外対象の棋譜であるとき
             except:
                 print(f'skip {filepath}')
                 # 処理をスキップ
@@ -80,9 +89,15 @@ for file_list, f in zip([file_list_train, file_list_test], [f_train, f_test]):
             if p == 0:
                 continue
 
+            # tofile(): NumPy配列(hcpes[:p])をバイナリファイル(f)に保存
+            # hcpe_train = train.hcpe, hcpe_test = test.hcpe
+            # f_train = open(args.hcpe_train, 'wb'), f_test = open(args.hcpe_test, 'wb')
+            # f = [f_train, f_test]
             hcpes[:p].tofile(f)
 
+            # 棋譜数
             kif_num += 1
+            # 局面数
             position_num += p
 
     print('kif_num', kif_num)
