@@ -88,20 +88,25 @@ class HcpeDataLoader:
         if len(hcpevec) < self.batch_size:
             return
 
+        # executer.submit(task, i): 並列タスクを実行するメソッド
         self.f = self.executor.submit(self.mini_batch, hcpevec)
 
     def __len__(self):
         return len(self.data)
 
+    # オブジェクトがイテレータとして振る舞うには、そのオブジェクトに __next__() と __iter__() という二つの特殊メソッドが必要になる
     def __iter__(self):
         self.i = 0
         if self.shuffle:
+            # np.random.shuffle(): 受け取った配列の要素をシャッフルして並び替える
             np.random.shuffle(self.data)
         self.pre_fetch()
         return self
 
     def __next__(self):
+        # 要素を全て取り出しきっているかチェック
         if self.i > len(self.data):
+            # 要素を全て取り出しきると例外StopIteration()
             raise StopIteration()
 
         result = self.f.result()
