@@ -15,15 +15,20 @@ class HcpeDataLoader:
         self.device = device
         self.shuffle = shuffle
 
+        # torch.empty: 初期化されていないデータで満たされたテンソルを返す
+        # torch.empty(*size, *, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False, pin_memory=False)
+        # pin_memory（bool 、optional）–設定されている場合、返されたテンソルは固定されたメモリに割り当てられる。CPUテンソルでのみ機能する。
         self.torch_features = torch.empty((batch_size, FEATURES_NUM, 9, 9), dtype=torch.float32, pin_memory=True)
         self.torch_move_label = torch.empty((batch_size), dtype=torch.int64, pin_memory=True)
         self.torch_result = torch.empty((batch_size, 1), dtype=torch.float32, pin_memory=True)
 
+        # インスタンス化
         self.features = self.torch_features.numpy()
         self.move_label = self.torch_move_label.numpy()
         self.result = self.torch_result.numpy().reshape(-1)
 
         self.i = 0
+        # ThreadPoolExecutor: マルチスレッドによる並列化を行う。コンストラクタ引数 max_workers でワーカー、すなわちスレッドの最大数を指定する。
         self.executor = ThreadPoolExecutor(max_workers=1)
 
         self.board = Board()
@@ -33,20 +38,29 @@ class HcpeDataLoader:
         if type(files) not in [list, tuple]:
             files = [files]
         for path in files:
+            # ファイルが存在するかチェック
             if os.path.exists(path):
                 logging.info(path)
+                # append: リストの末尾にデータを追加
+                # fromfile: ファイルの名前と配列のデータ型を入力パラメーターとして受け取り、配列を返す
                 data.append(np.fromfile(path, dtype=HuffmanCodedPosAndEval))
             else:
                 logging.warn('{} not found, skipping'.format(path))
+        # concatenate(): 複数のNumPy配列ndarrayを結合（連結）する。結合する軸はデフォルト0で縦
         self.data = np.concatenate(data)
 
+    # ミニバッチ作成(?)
     def mini_batch(self, hcpevec):
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
+            # set_hcp(hcp): hcp形式を指定して盤面を設定する
             self.board.set_hcp(hcpe['hcp'])
+            # make_input_features(board, features): 入力特徴量を作成する
             make_input_features(self.board, self.features[i])
+            # make_move_label(move, color): 移動を表すラベルを作成。引数move: 指し手の数値を受け取る。
             self.move_label[i] = make_move_label(
                 hcpe['bestMove16'], self.board.turn)
+            # make_result(game_result, color): 対局結果から価値ネットワークの出力ラベル(1, 0, 0.5)に変換する。
             self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
 
         if self.device.type == 'cpu':
@@ -54,6 +68,7 @@ class HcpeDataLoader:
                     self.torch_move_label.clone(),
                     self.torch_result.clone(),
                     )
+        # deviceに転送
         else:
             return (self.torch_features.to(self.device),
                     self.torch_move_label.to(self.device),
@@ -61,6 +76,10 @@ class HcpeDataLoader:
                     )
 
     def sample(self):
+        # np.random.choice(a, size, replace=False, p): 配列やリストからランダムに要素を取り出す。
+        # size: 出力する配列のshapeを指定
+        # replace=False: 重複なし
+        # 配列中の各要素の生起確率をオプションpを与えることで設定可能
         return self.mini_batch(np.random.choice(self.data, self.batch_size, replace=False))
 
     def pre_fetch(self):
