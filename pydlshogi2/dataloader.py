@@ -75,6 +75,10 @@ class HcpeDataLoader:
                     self.torch_result.to(self.device),
                     )
 
+    def pioritized_experience_replay(self):
+        return 0
+        
+    
     def sample(self):
         # np.random.choice(a, size, replace=False, p): 配列やリストからランダムに要素を取り出す。
         # size: 出力する配列のshapeを指定
