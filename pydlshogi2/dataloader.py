@@ -6,6 +6,7 @@ import torch
 
 from cshogi import Board, HuffmanCodedPosAndEval
 from pydlshogi2.features import FEATURES_NUM, make_input_features, make_move_label, make_result
+import pydlshogi2.SumTree
 
 
 class HcpeDataLoader:
@@ -25,6 +26,7 @@ class HcpeDataLoader:
         # インスタンス化
         self.features = self.torch_features.numpy()
         self.move_label = self.torch_move_label.numpy()
+        # reshape(-1): 行ベクトルに変換
         self.result = self.torch_result.numpy().reshape(-1)
 
         self.i = 0
@@ -76,6 +78,10 @@ class HcpeDataLoader:
                     )
 
     def pioritized_experience_replay(self):
+        sumtree = SumTree(2**20)
+        self.features.fill(0)
+        # for i, hcpe in enumerate(hcpevec):
+            
         return 0
         
     
