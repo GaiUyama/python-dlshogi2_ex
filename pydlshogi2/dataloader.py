@@ -7,6 +7,7 @@ import torch
 from cshogi import Board, HuffmanCodedPosAndEval
 from pydlshogi2.features import FEATURES_NUM, make_input_features, make_move_label, make_result
 import pydlshogi2.SumTree
+import pydlshogi2.make_priority
 
 
 class HcpeDataLoader:
@@ -108,7 +109,7 @@ class HcpeDataLoader:
         sumtree = SumTree(2**20)
         
         for i, hcpe in enumerate(self.data):
-            self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
+            self.result[i] = make_priority(hcpe['gameResult'], self.board.turn)
             
             sumtree.add(hcpe[''])
             
