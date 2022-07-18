@@ -77,11 +77,26 @@ class HcpeDataLoader:
                     self.torch_result.to(self.device),
                     )
 
-    def pioritized_experience_replay(self):
+    def prioritized_experience_replay(self):
         sumtree = SumTree(2**20)
         self.features.fill(0)
-        # for i, hcpe in enumerate(hcpevec):
+        for i, hcpe in enumerate(hcpevec):
+            self.board.set_hcp(hcpe['hcp'])
+            make_input_features(self.board, self.features[i])
+            self.move_label[i] = make_move_label(
+                hcpe['bestMove16'], self.board.turn)
+            self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
             
+        if self.device.type == 'cpu':
+            return (self.torch_features.clone(),
+                    self.torch_move_label.clone(),
+                    self.torch_result.clone(),
+                    )
+        else:
+            return (self.torch_features.to(self.device),
+                    self.torch_move_label.to(self.device),
+                    self.torch_result.to(self.device),
+                    )
         return 0
         
     
