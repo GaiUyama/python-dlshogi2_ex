@@ -23,12 +23,16 @@ class HcpeDataLoader:
         self.torch_features = torch.empty((batch_size, FEATURES_NUM, 9, 9), dtype=torch.float32, pin_memory=True)
         self.torch_move_label = torch.empty((batch_size), dtype=torch.int64, pin_memory=True)
         self.torch_result = torch.empty((batch_size, 1), dtype=torch.float32, pin_memory=True)
+        
+        self.torch_priority = torch.empty((batch_size, 1), dtype=torch.float32, pin_memory=True)
 
         # インスタンス化
         self.features = self.torch_features.numpy()
         self.move_label = self.torch_move_label.numpy()
         # reshape(-1): 行ベクトルに変換
         self.result = self.torch_result.numpy().reshape(-1)
+        
+        self.priority = self.torch_priority.numpy().reshape(-1)
 
         self.i = 0
         # ThreadPoolExecutor: マルチスレッドによる並列化を行う。コンストラクタ引数 max_workers でワーカー、すなわちスレッドの最大数を指定する。
@@ -92,6 +96,12 @@ class HcpeDataLoader:
             # make_result(game_result, color): 対局結果から価値ネットワークの出力ラベル(1, 0, 0.5)に変換する。
             self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
             
+            sumtree = SumTree(2**20)
+            
+            sumtree.add(make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn))
+            
+            
+            
         if self.device.type == 'cpu':
             return (self.torch_features.clone(),
                     self.torch_move_label.clone(),
@@ -109,9 +119,9 @@ class HcpeDataLoader:
         sumtree = SumTree(2**20)
         
         for i, hcpe in enumerate(self.data):
-            self.result[i] = make_priority(hcpe['gameResult'], self.board.turn)
+            # sumtree[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             
-            sumtree.add(hcpe[''])
+            sumtree.add(make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn))
             
             
             
