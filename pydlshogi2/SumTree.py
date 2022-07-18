@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 class SumTree:
     # データを追加する見かけ上のインデックス
@@ -7,8 +7,8 @@ class SumTree:
     # capacity: replay memoryの大きさ
     def __init__(self, capacity):
         self.capacity = capacity
-        self.tree = numpy.zeros( 2*capacity - 1 )
-        self.data = numpy.zeros( capacity, dtype=object )
+        self.tree = np.zeros( 2*capacity - 1 )
+        self.data = np.zeros( capacity, dtype=object )
 
     # change: 値の変化量
     def _propagate(self, idx, change):
