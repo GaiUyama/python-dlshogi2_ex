@@ -3,6 +3,24 @@ import numpy as np
 import pydlshogi2.SumTree
 import pydlshogi2.make_priority
 
+'''
+import math
+
+def make_priority(eval, game_result, color):
+    if color == BLACK:
+        if game_result == BLACK_WIN:
+            return math.fabs(1000-eval)
+        if game_result == WHITE_WIN:
+            return math.fabs(-1000-eval)
+    else:
+        if game_result == BLACK_WIN:
+            return math.fabs(-1000-eval)
+        if game_result == WHITE_WIN:
+            return math.fabs(1000-eval)
+    return math.fabs(eval)
+'''
+
+
 def prioritized_experience_replay(self):
         sumtree = SumTree(2**20)
         self.features.fill(0)
