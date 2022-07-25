@@ -24,6 +24,7 @@ class HcpeDataLoader:
         self.torch_move_label = torch.empty((batch_size), dtype=torch.int64, pin_memory=True)
         self.torch_result = torch.empty((batch_size, 1), dtype=torch.float32, pin_memory=True)
         
+        # 優先度
         self.torch_priority = torch.empty((batch_size, 1), dtype=torch.float32, pin_memory=True)
 
         # インスタンス化
@@ -32,6 +33,7 @@ class HcpeDataLoader:
         # reshape(-1): 行ベクトルに変換
         self.result = self.torch_result.numpy().reshape(-1)
         
+        # 優先度
         self.priority = self.torch_priority.numpy().reshape(-1)
 
         self.i = 0
