@@ -11,11 +11,13 @@ import pydlshogi2.make_priority
 
 
 class HcpeDataLoader:
-    def __init__(self, files, batch_size, device, shuffle=False):
+    def __init__(self, files, batch_size, device, shuffle=False, PER=False):
         self.load(files)
         self.batch_size = batch_size
         self.device = device
         self.shuffle = shuffle
+        # PERを使用するか
+        self.PER = PER
 
         # torch.empty: 初期化されていないデータで満たされたテンソルを返す
         # torch.empty(*size, *, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False, pin_memory=False)
@@ -84,9 +86,11 @@ class HcpeDataLoader:
                     self.torch_result.to(self.device),
                     )
 
+        
     # 優先度付き経験再生
-    def prioritized_experience_replay(self):
-        sumtree = SumTree(2**20)
+    '''
+    def prioritized_experience_replay(self, hcpevec):
+        sumtree = SumTree(self.batch_size)
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
             # set_hcp(hcp): hcp形式を指定して盤面を設定する
@@ -102,7 +106,7 @@ class HcpeDataLoader:
             # 優先度
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             
-            sumtree.add(self.priority[i])
+            sumtree.add(self.priority[i], i)
             
             
             
@@ -118,6 +122,7 @@ class HcpeDataLoader:
                     self.torch_result.to(self.device),
                     )
         return 0
+    '''
         
         
     '''
@@ -142,6 +147,23 @@ class HcpeDataLoader:
         # replace=False: 重複なし
         # 配列中の各要素の生起確率をオプションpを与えることで設定可能
         return self.mini_batch(np.random.choice(self.data, self.batch_size, replace=False))
+    
+    
+    '''
+    def PER_sample(self):
+        # np.random.choice(a, size, replace=False, p): 配列やリストからランダムに要素を取り出す。
+        # size: 出力する配列のshapeを指定
+        # replace=False: 重複なし
+        # 配列中の各要素の生起確率をオプションpを与えることで設定可能
+        # return self.mini_batch(np.random.choice(self.data, self.batch_size, replace=False))
+    
+        s = random.uniform(0, sumtree.total())
+        
+        sumtree.get(s)
+    '''
+    
+    
+    
 
     def pre_fetch(self):
         hcpevec = self.data[self.i:self.i+self.batch_size]
@@ -161,6 +183,17 @@ class HcpeDataLoader:
         if self.shuffle:
             # np.random.shuffle(): 受け取った配列の要素をシャッフルして並び替える
             np.random.shuffle(self.data)
+        
+        # PER = True
+        '''
+        if self.PER:
+            # シャッフルが必要か要検討
+            np.random.shuffle(self.data)
+            
+            s = random.uniform(0, sumtree.total())
+            
+            sumtree.get(s)
+        '''
         self.pre_fetch()
         return self
 
