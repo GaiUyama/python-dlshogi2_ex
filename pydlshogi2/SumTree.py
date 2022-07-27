@@ -10,6 +10,7 @@ class SumTree:
         self.tree = np.zeros( 2*capacity - 1 )
         self.data = np.zeros( capacity, dtype=object )
 
+    # 伝播
     # change: 値の変化量
     def _propagate(self, idx, change):
         # parent: 親ノードのインデックス
