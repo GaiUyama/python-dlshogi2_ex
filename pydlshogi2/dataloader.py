@@ -98,9 +98,12 @@ class HcpeDataLoader:
             # make_result(game_result, color): 対局結果から価値ネットワークの出力ラベル(1, 0, 0.5)に変換する。
             self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
             
+            # 優先度
+            self.priority = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+            
             sumtree = SumTree(2**20)
             
-            sumtree.add(make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn))
+            sumtree.add(make_priority(self.priority))
             
             
             
