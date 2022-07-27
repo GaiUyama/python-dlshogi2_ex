@@ -84,6 +84,7 @@ class HcpeDataLoader:
                     self.torch_result.to(self.device),
                     )
 
+    # 優先度付き経験再生
     def prioritized_experience_replay(self):
         sumtree = SumTree(2**20)
         self.features.fill(0)
@@ -99,11 +100,9 @@ class HcpeDataLoader:
             self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
             
             # 優先度
-            self.priority = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+            self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             
-            sumtree = SumTree(2**20)
-            
-            sumtree.add(make_priority(self.priority))
+            sumtree.add(self.priority[i])
             
             
             
@@ -120,6 +119,8 @@ class HcpeDataLoader:
                     )
         return 0
         
+        
+    '''
     def prioritized_experience_replay(self):
         sumtree = SumTree(2**20)
         
@@ -131,7 +132,7 @@ class HcpeDataLoader:
             
             
         self.mini_batch(np.random.choice(self.data, self.batch_size, replace=False))
-    
+    '''
     
     
     
