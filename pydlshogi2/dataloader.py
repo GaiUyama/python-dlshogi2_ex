@@ -62,6 +62,7 @@ class HcpeDataLoader:
 
     # ミニバッチ作成(?)
     def mini_batch(self, hcpevec):
+        # 入力特徴量を0に初期化
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
             # set_hcp(hcp): hcp形式を指定して盤面を設定する
@@ -89,8 +90,17 @@ class HcpeDataLoader:
         
     # 優先度付き経験再生
     '''
-    def prioritized_experience_replay(self, hcpevec):
+    def PER_mini_batch(self, hcpevec):
         sumtree = SumTree(self.batch_size)
+        
+        for i, hcpe in enumerate(hcpevec):
+            # 優先度
+            self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+            sumtree.add(self.priority[i], i)
+        for i in self.batch_size
+            s = random.uniform(0, sumtree.total())
+            hcpevec = sumtree.get(s)
+            
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
             # set_hcp(hcp): hcp形式を指定して盤面を設定する
@@ -173,11 +183,28 @@ class HcpeDataLoader:
 
         # executer.submit(task, i): 並列タスクを実行するメソッド
         self.f = self.executor.submit(self.mini_batch, hcpevec)
+        
+        
+    '''
+    def PER_pre_fetch(self):
+        hcpevec = self.data[self.i:self.i+self.batch_size]
+        self.i += self.batch_size
+        if len(hcpevec) < self.batch_size:
+            return
+
+        if self.PER:
+            self.f = self.executor.submit()
+        else:
+            # executer.submit(task, i): 並列タスクを実行するメソッド
+            self.f = self.executor.submit(self.mini_batch, hcpevec)
+     '''
+          
 
     def __len__(self):
         return len(self.data)
 
     # オブジェクトがイテレータとして振る舞うには、そのオブジェクトに __next__() と __iter__() という二つの特殊メソッドが必要になる
+    # forを始める前に__iter__メソッドが実行される
     def __iter__(self):
         self.i = 0
         if self.shuffle:
@@ -188,7 +215,7 @@ class HcpeDataLoader:
         '''
         if self.PER:
             # シャッフルが必要か要検討
-            np.random.shuffle(self.data)
+            # np.random.shuffle(self.data)
             
             s = random.uniform(0, sumtree.total())
             
@@ -197,6 +224,7 @@ class HcpeDataLoader:
         self.pre_fetch()
         return self
 
+    # forブロックのループのたびに__next__メソッドが実行される
     def __next__(self):
         # 要素を全て取り出しきっているかチェック
         if self.i > len(self.data):
