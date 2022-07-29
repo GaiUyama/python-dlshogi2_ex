@@ -1,4 +1,5 @@
 import numpy as np
+# from cshogi import HuffmanCodedPosAndEval
 
 class SumTree:
     # データを追加する見かけ上のインデックス
@@ -8,7 +9,7 @@ class SumTree:
     def __init__(self, capacity):
         self.capacity = capacity
         self.tree = np.zeros( 2*capacity - 1 )
-        self.data = np.zeros( capacity, dtype=object )
+        self.data = np.zeros( capacity, dtype=object ) # dtype=HuffmanCodedPosAndEval
 
     # 伝播
     # change: 値の変化量
