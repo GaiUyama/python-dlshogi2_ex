@@ -88,18 +88,21 @@ class HcpeDataLoader:
                     )
 
         
-    # 優先度付き経験再生
+    # 優先度付きミニバッチ
     '''
     def PER_mini_batch(self, hcpevec):
         sumtree = SumTree(self.batch_size)
-        
+        # SumTree作成
         for i, hcpe in enumerate(hcpevec):
             # 優先度
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            sumtree.add(self.priority[i], i)
-        for i in self.batch_size
+            sumtree.add(self.priority[i], hcpe)
+            
+        # ミニバッチ作り直し
+        for i in range(self.batch_size)
             s = random.uniform(0, sumtree.total())
-            hcpevec = sumtree.get(s)
+            idx, p, data = sumtree.get(s)
+            hcpevec[i] = data
             
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
@@ -112,13 +115,7 @@ class HcpeDataLoader:
                 hcpe['bestMove16'], self.board.turn)
             # make_result(game_result, color): 対局結果から価値ネットワークの出力ラベル(1, 0, 0.5)に変換する。
             self.result[i] = make_result(hcpe['gameResult'], self.board.turn)
-            
-            # 優先度
-            self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            
-            sumtree.add(self.priority[i], i)
-            
-            
+
             
         if self.device.type == 'cpu':
             return (self.torch_features.clone(),
@@ -133,23 +130,6 @@ class HcpeDataLoader:
                     )
         return 0
     '''
-        
-        
-    '''
-    def prioritized_experience_replay(self):
-        sumtree = SumTree(2**20)
-        
-        for i, hcpe in enumerate(self.data):
-            # sumtree[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            
-            sumtree.add(make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn))
-            
-            
-            
-        self.mini_batch(np.random.choice(self.data, self.batch_size, replace=False))
-    '''
-    
-    
     
     def sample(self):
         # np.random.choice(a, size, replace=False, p): 配列やリストからランダムに要素を取り出す。
@@ -193,7 +173,7 @@ class HcpeDataLoader:
             return
 
         if self.PER:
-            self.f = self.executor.submit()
+            self.f = self.executor.submit(self.PER_mini_batch, hcpevec)
         else:
             # executer.submit(task, i): 並列タスクを実行するメソッド
             self.f = self.executor.submit(self.mini_batch, hcpevec)
