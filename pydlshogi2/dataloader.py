@@ -7,8 +7,8 @@ import random
 
 from cshogi import Board, HuffmanCodedPosAndEval
 from pydlshogi2.features import FEATURES_NUM, make_input_features, make_move_label, make_result
-import pydlshogi2.SumTree
-import pydlshogi2.make_priority
+from pydlshogi2.SumTree import SumTree
+from pydlshogi2.make_priority import make_priority
 
 
 class HcpeDataLoader:
