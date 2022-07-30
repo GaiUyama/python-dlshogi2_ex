@@ -1,5 +1,7 @@
 import math
 
+from cshogi import *
+
 def make_priority(eval, game_result, color):
     if color == BLACK:
         if game_result == BLACK_WIN:
