@@ -11,13 +11,13 @@ import pydlshogi2.make_priority
 
 
 class HcpeDataLoader:
-    def __init__(self, files, batch_size, device, shuffle=False, PER=False):
+    def __init__(self, files, batch_size, device, shuffle=False, per=False):
         self.load(files)
         self.batch_size = batch_size
         self.device = device
         self.shuffle = shuffle
         # PERを使用するか
-        self.PER = PER
+        self.per = per
 
         # torch.empty: 初期化されていないデータで満たされたテンソルを返す
         # torch.empty(*size, *, out=None, dtype=None, layout=torch.strided, device=None, requires_grad=False, pin_memory=False)
@@ -89,8 +89,8 @@ class HcpeDataLoader:
 
         
     # 優先度付きミニバッチ
-    '''
-    def PER_mini_batch(self, hcpevec):
+    
+    def per_mini_batch(self, hcpevec):
         sumtree = SumTree(self.batch_size)
         # SumTree作成
         for i, hcpe in enumerate(hcpevec):
@@ -128,8 +128,8 @@ class HcpeDataLoader:
                     self.torch_move_label.to(self.device),
                     self.torch_result.to(self.device),
                     )
-        return 0
-    '''
+        
+    
     
     def sample(self):
         # np.random.choice(a, size, replace=False, p): 配列やリストからランダムに要素を取り出す。
@@ -160,20 +160,23 @@ class HcpeDataLoader:
         self.i += self.batch_size
         if len(hcpevec) < self.batch_size:
             return
-
-        # executer.submit(task, i): 並列タスクを実行するメソッド
-        self.f = self.executor.submit(self.mini_batch, hcpevec)
         
+        if self.per:
+            self.f = self.executor.submit(self.per_mini_batch, hcpevec)
+        else:
+            # executer.submit(task, i): 並列タスクを実行するメソッド
+            self.f = self.executor.submit(self.mini_batch, hcpevec)
+
         
     '''
-    def PER_pre_fetch(self):
+    def per_pre_fetch(self):
         hcpevec = self.data[self.i:self.i+self.batch_size]
         self.i += self.batch_size
         if len(hcpevec) < self.batch_size:
             return
 
-        if self.PER:
-            self.f = self.executor.submit(self.PER_mini_batch, hcpevec)
+        if self.per:
+            self.f = self.executor.submit(self.per_mini_batch, hcpevec)
         else:
             # executer.submit(task, i): 並列タスクを実行するメソッド
             self.f = self.executor.submit(self.mini_batch, hcpevec)
