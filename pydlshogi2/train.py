@@ -58,7 +58,7 @@ else:
 # 訓練データ読み込み
 logging.info('Reading training data')
 # dataloaderをインスタンス化
-train_dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True)
+train_dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
 # テストデータ読み込み
 logging.info('Reading test data')
 test_dataloader = HcpeDataLoader(args.test_data, args.testbatchsize, device)
