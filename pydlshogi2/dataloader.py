@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 import logging
 import torch
+import random
 
 from cshogi import Board, HuffmanCodedPosAndEval
 from pydlshogi2.features import FEATURES_NUM, make_input_features, make_move_label, make_result
@@ -99,7 +100,7 @@ class HcpeDataLoader:
             sumtree.add(self.priority[i], hcpe)
             
         # ミニバッチ作り直し
-        for i in range(self.batch_size)
+        for i in range(self.batch_size):
             s = random.uniform(0, sumtree.total())
             idx, p, data = sumtree.get(s)
             hcpevec[i] = data
