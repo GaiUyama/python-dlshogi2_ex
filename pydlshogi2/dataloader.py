@@ -168,21 +168,6 @@ class HcpeDataLoader:
         else:
             # executer.submit(task, i): 並列タスクを実行するメソッド
             self.f = self.executor.submit(self.mini_batch, hcpevec)
-
-        
-    '''
-    def per_pre_fetch(self):
-        hcpevec = self.data[self.i:self.i+self.batch_size]
-        self.i += self.batch_size
-        if len(hcpevec) < self.batch_size:
-            return
-
-        if self.per:
-            self.f = self.executor.submit(self.per_mini_batch, hcpevec)
-        else:
-            # executer.submit(task, i): 並列タスクを実行するメソッド
-            self.f = self.executor.submit(self.mini_batch, hcpevec)
-     '''
           
 
     def __len__(self):
@@ -196,16 +181,6 @@ class HcpeDataLoader:
             # np.random.shuffle(): 受け取った配列の要素をシャッフルして並び替える
             np.random.shuffle(self.data)
         
-        # PER = True
-        '''
-        if self.PER:
-            # シャッフルが必要か要検討
-            # np.random.shuffle(self.data)
-            
-            s = random.uniform(0, sumtree.total())
-            
-            sumtree.get(s)
-        '''
         self.pre_fetch()
         return self
 
