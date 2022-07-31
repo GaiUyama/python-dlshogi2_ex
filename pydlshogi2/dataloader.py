@@ -161,8 +161,10 @@ class HcpeDataLoader:
         if len(hcpevec) < self.batch_size:
             return
         
+        # per=True
         if self.per:
             self.f = self.executor.submit(self.per_mini_batch, hcpevec)
+        # per=False
         else:
             # executer.submit(task, i): 並列タスクを実行するメソッド
             self.f = self.executor.submit(self.mini_batch, hcpevec)
