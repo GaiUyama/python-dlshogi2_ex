@@ -61,7 +61,7 @@ class HcpeDataLoader:
         # concatenate(): 複数のNumPy配列ndarrayを結合（連結）する。結合する軸はデフォルト0で縦
         self.data = np.concatenate(data)
 
-    # ミニバッチ作成(?)
+    # ミニバッチ作成
     def mini_batch(self, hcpevec):
         # 入力特徴量を0に初期化
         self.features.fill(0)
@@ -90,7 +90,6 @@ class HcpeDataLoader:
 
         
     # 優先度付きミニバッチ
-    
     def per_mini_batch(self, hcpevec):
         sumtree = SumTree(self.batch_size)
         # SumTree作成
