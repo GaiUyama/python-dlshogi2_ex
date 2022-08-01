@@ -91,6 +91,7 @@ class HcpeDataLoader:
         
     # 優先度付きミニバッチ
     def per_mini_batch(self, hcpevec):
+        '''
         sumtree = SumTree(self.batch_size)
         # SumTree作成
         for i, hcpe in enumerate(hcpevec):
@@ -103,7 +104,16 @@ class HcpeDataLoader:
             s = random.uniform(0, sumtree.total())
             idx, p, data = sumtree.get(s)
             hcpevec[i] = data
-            
+        '''    
+        
+        for i, hcpe in enumerate(hcpevec):
+            # 優先度
+            self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+        
+        hcpevec = np.random.choice(hcpevec, self.batch_size, self.priority, replace=False)
+        
+        
+        
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
             # set_hcp(hcp): hcp形式を指定して盤面を設定する
