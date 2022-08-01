@@ -25,4 +25,6 @@ logging.info('batchsize={}'.format(args.batchsize))
 logging.info('lr={}'.format(args.lr))
 
 
-dataloader = HcpeDataLoader()
+dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
+
+dataloader.pre_fetch
