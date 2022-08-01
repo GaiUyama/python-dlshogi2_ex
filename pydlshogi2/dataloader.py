@@ -205,3 +205,18 @@ class HcpeDataLoader:
         self.pre_fetch()
 
         return result
+
+    
+    x = []
+    
+    num = ['0', '1', ..., '9']
+    
+    for i in range(720):
+        for j in num:
+            for k in num:
+                if k == j:
+                    continue
+                for l in num:
+                    if l == j or l == k:
+                        continue
+                    x[i] = j + k + l
