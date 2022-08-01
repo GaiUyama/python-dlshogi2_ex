@@ -109,6 +109,7 @@ class HcpeDataLoader:
         for i, hcpe in enumerate(hcpevec):
             # 優先度
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+            print(self.priority)
         
         hcpevec = np.random.choice(hcpevec, self.batch_size, self.priority, replace=False)
         
