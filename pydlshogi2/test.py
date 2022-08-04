@@ -24,6 +24,11 @@ logging.basicConfig(format='%(asctime)s\t%(levelname)s\t%(message)s', datefmt='%
 logging.info('batchsize={}'.format(args.batchsize))
 logging.info('lr={}'.format(args.lr))
 
+# デバイス
+if args.gpu >= 0:
+    device = torch.device(f"cuda:{args.gpu}")
+else:
+    device = torch.device("cpu")
 
 dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
 
