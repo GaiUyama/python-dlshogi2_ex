@@ -113,7 +113,7 @@ class HcpeDataLoader:
         
         hcpevec = np.random.choice(hcpevec, self.batch_size, self.priority, replace=False)
         
-        
+        print(1)
         
         self.features.fill(0)
         for i, hcpe in enumerate(hcpevec):
