@@ -31,6 +31,6 @@ else:
     device = torch.device("cpu")
 
 dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
-
+print(1)
 
 dataloader.test
