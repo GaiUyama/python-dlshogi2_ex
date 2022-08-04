@@ -32,4 +32,4 @@ else:
 
 dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
 
-dataloader.pre_fetch
+print(dataloader.pre_fetch)
