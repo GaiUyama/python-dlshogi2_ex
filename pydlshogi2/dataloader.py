@@ -107,6 +107,7 @@ class HcpeDataLoader:
         '''    
         
         for i, hcpe in enumerate(hcpevec):
+            self.board.set_hcp(hcpe['hcp'])
             # 優先度
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             print(self.priority[i])
