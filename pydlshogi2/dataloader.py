@@ -44,6 +44,9 @@ class HcpeDataLoader:
         self.executor = ThreadPoolExecutor(max_workers=1)
 
         self.board = Board()
+        
+        if self.per:
+            self.per_sort()
 
     def load(self, files):
         data = []
@@ -61,19 +64,22 @@ class HcpeDataLoader:
         # concatenate(): 複数のNumPy配列ndarrayを結合（連結）する。結合する軸はデフォルト0で縦
         self.data = np.concatenate(data)
         
-        print(self.data)
+        # print(self.data)
         
             
-    def per_sort(self, data):
+    def per_sort(self):
         hcpes = []
-        for i, hcpe in enumerate(data):
+        for i, hcpe in enumerate(self.data):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             hcpes[i] = hcpe
         priority_sort = self.priority.sort[::-1]
         
-        for i in range(data):
-            priority_sort[i]
+        for i in range(self.data):
+            for j in range(self.data):
+                if priority_sort[i] == self.priority[j]:
+                    self.data[i] = hcpes[j]
+            
         
 
     # ミニバッチ作成
@@ -199,6 +205,9 @@ class HcpeDataLoader:
         if len(hcpevec) < self.batch_size:
             return
         
+        self.f = self.executor.submit(self.mini_batch, hcpevec)
+        
+        '''
         # per=True
         if self.per:
             self.f = self.executor.submit(self.per_mini_batch, hcpevec)
@@ -206,6 +215,7 @@ class HcpeDataLoader:
         else:
             # executer.submit(task, i): 並列タスクを実行するメソッド
             self.f = self.executor.submit(self.mini_batch, hcpevec)
+        '''
           
 
     def __len__(self):
