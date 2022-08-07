@@ -19,4 +19,4 @@ def make_priority(eval, game_result, color):
             return math.fabs(1000-eval)
     return math.fabs(eval)
 
-def r_make_priority():
+# def r_make_priority():
