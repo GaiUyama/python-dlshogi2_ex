@@ -65,10 +65,16 @@ class HcpeDataLoader:
         
             
     def per_sort(self, data):
+        hcpes = []
         for i, hcpe in enumerate(data):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            
+            hcpes[i] = hcpe
+        priority_sort = self.priority.sort[::-1]
+        
+        for i in range(data):
+            priority_sort[i]
+        
 
     # ミニバッチ作成
     def mini_batch(self, hcpevec):
