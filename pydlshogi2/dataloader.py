@@ -63,7 +63,9 @@ class HcpeDataLoader:
         
         print(self.data)
         
-        for i, hcpe in enumerate(self.data):
+            
+    def per_sort(self, data):
+        for i, hcpe in enumerate(data):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             
