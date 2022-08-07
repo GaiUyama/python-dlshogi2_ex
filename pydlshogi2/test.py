@@ -30,9 +30,9 @@ if args.gpu >= 0:
 else:
     device = torch.device("cpu")
 
-dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=True, per=True)
+dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=False, per=False)
 print(1)
 
-#p = dataloader.test()
+p = dataloader.test()
 
-#print(p)
+print(p)
