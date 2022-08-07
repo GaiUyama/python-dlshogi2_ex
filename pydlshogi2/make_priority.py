@@ -6,7 +6,7 @@ from cshogi import *
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-def e_make_priority(eval, game_result, color):
+def make_priority(eval, game_result, color):
     if color == BLACK:
         if game_result == BLACK_WIN:
             return math.fabs(1000-eval)
