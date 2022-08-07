@@ -60,6 +60,13 @@ class HcpeDataLoader:
                 logging.warn('{} not found, skipping'.format(path))
         # concatenate(): 複数のNumPy配列ndarrayを結合（連結）する。結合する軸はデフォルト0で縦
         self.data = np.concatenate(data)
+        
+        print(self.data)
+        
+        for i, hcpe in enumerate(self.data):
+            self.board.set_hcp(hcpe['hcp'])
+            self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
+            
 
     # ミニバッチ作成
     def mini_batch(self, hcpevec):
