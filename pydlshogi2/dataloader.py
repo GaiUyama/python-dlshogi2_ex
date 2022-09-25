@@ -73,13 +73,33 @@ class HcpeDataLoader:
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             hcpes[i] = hcpe
-        priority_sort = self.priority.sort[::-1]
+        priority_sort = sorted(self.priority)
         
-        for i in range(self.data):
-            for j in range(self.data):
+        n_data = []  #priority = 0 のデータ
+        p_data = []  #priority = 1 のデータ
+        i = 0
+        j = 0
+        
+        for k in range(len(self.data)):
+            if self.priority[k] == 0:
+                n_data[i] = hcpes[k]
+                i += 1
+            else:
+                p_data[j] = hcpes[k]
+                j += 1
+                
+        random.shuffle(n_data)
+        random.shuffle(p_data)
+        
+        self.data = n_data.extend(p_data)
+        
+        '''
+        for i in range(len(self.data)):
+            for j in range(len(self.data)):
                 if priority_sort[i] == self.priority[j]:
                     self.data[i] = hcpes[j]
-            
+                    break
+        '''
         
 
     # ミニバッチ作成
