@@ -67,9 +67,9 @@ class HcpeDataLoader:
         # print(self.data)
         
             
-    def per_sort(self):
+    def per_sort(self, hcpevec):
         hcpes = []
-        for i, hcpe in enumerate(self.data):
+        for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             hcpes[i] = hcpe
@@ -80,7 +80,7 @@ class HcpeDataLoader:
         i = 0
         j = 0
         
-        for k in range(len(self.data)):
+        for k in range(len(hcpevec)):
             if self.priority[k] == 0:
                 n_data[i] = hcpes[k]
                 i += 1
@@ -91,7 +91,7 @@ class HcpeDataLoader:
         random.shuffle(n_data)
         random.shuffle(p_data)
         
-        self.data = n_data.extend(p_data)
+        hcpevec = n_data.extend(p_data)
         
         '''
         for i in range(len(self.data)):
