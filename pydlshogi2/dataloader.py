@@ -45,8 +45,10 @@ class HcpeDataLoader:
 
         self.board = Board()
         
+        '''
         if self.per:
             self.per_sort()
+        '''
 
     def load(self, files):
         data = []
@@ -205,8 +207,8 @@ class HcpeDataLoader:
         sumtree.get(s)
     '''
     
-    # テスト
-    def test(self):
+    # デバッグ
+    def debug(self):
         hcpevec = self.data[self.i:self.i+self.batch_size]
         for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
@@ -224,6 +226,10 @@ class HcpeDataLoader:
         self.i += self.batch_size
         if len(hcpevec) < self.batch_size:
             return
+        
+        # per=True
+        if self.per:
+            per_sort(hcpevec)
         
         self.f = self.executor.submit(self.mini_batch, hcpevec)
         
