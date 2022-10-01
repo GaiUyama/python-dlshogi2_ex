@@ -33,6 +33,6 @@ else:
 dataloader = HcpeDataLoader(args.train_data, args.batchsize, device, shuffle=False, per=False)
 print(1)
 
-p = dataloader.test()
+p = dataloader.debug()
 
 print(p)
