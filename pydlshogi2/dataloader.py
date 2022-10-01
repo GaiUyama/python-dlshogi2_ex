@@ -74,7 +74,8 @@ class HcpeDataLoader:
         for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            hcpes[i] = hcpe
+            hcpes.append(hcpe)
+            # hcpes[i] = hcpe
         priority_sort = sorted(self.priority)
         
         n_data = []  #priority = 0 のデータ
@@ -84,12 +85,14 @@ class HcpeDataLoader:
         
         for k in range(len(hcpevec)):
             if self.priority[k] == 0:
+                # n_data.append(hcpes[k])
                 n_data[i] = hcpes[k]
                 i += 1
             else:
+                # p_data.append(hcpes[k])
                 p_data[j] = hcpes[k]
                 j += 1
-                
+        # np.random.shuffle()?        
         random.shuffle(n_data)
         random.shuffle(p_data)
         
@@ -210,15 +213,22 @@ class HcpeDataLoader:
     # デバッグ
     def debug(self):
         hcpevec = self.data[self.i:self.i+self.batch_size]
+        '''
         for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
             # 優先度
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             # print(self.priority[i])
+        '''
+        self.per_sort(hcpevec)
+        #hcpevec = np.random.choice(hcpevec, self.batch_size, self.priority, replace=False)
         
-        hcpevec = np.random.choice(hcpevec, self.batch_size, self.priority, replace=False)
-        
-        return self.priority
+        for i, hcpe in enumerate(hcpevec):
+          print(hcpe)
+
+        return hcpevec
+    
+        # return self.priority
     
 
     def pre_fetch(self):
@@ -229,7 +239,7 @@ class HcpeDataLoader:
         
         # per=True
         if self.per:
-            per_sort(hcpevec)
+            self.per_sort(hcpevec)
         
         self.f = self.executor.submit(self.mini_batch, hcpevec)
         
