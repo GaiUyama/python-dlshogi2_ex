@@ -71,11 +71,26 @@ class HcpeDataLoader:
             
     def per_sort(self, hcpevec):
         hcpes = []
+        n_data = []
+        p_data = []
+        
         for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
-            hcpes.append(hcpe)
+            hcpes.extend(hcpe)
+            # hcpes.append(hcpe)
             # hcpes[i] = hcpe
+            
+            if self.priority[i] == 0:
+                n_data.extend(hcpe)
+            else:
+                p_data.extend(hcpe)
+        
+        np.random.shuffle(n_data)
+        np.random.shuffle(p_data)
+        hcpevec = n_data.extend(p_data)
+        
+        '''
         priority_sort = sorted(self.priority)
         
         n_data = []  #priority = 0 のデータ
@@ -85,19 +100,21 @@ class HcpeDataLoader:
         
         for k in range(len(hcpevec)):
             if self.priority[k] == 0:
+                # n_data.extend(hcpes[k])
                 # n_data.append(hcpes[k])
                 n_data[i] = hcpes[k]
                 i += 1
             else:
+                # p_data.extend(hcpes[k])
                 # p_data.append(hcpes[k])
                 p_data[j] = hcpes[k]
                 j += 1
-        # np.random.shuffle()?        
-        random.shuffle(n_data)
-        random.shuffle(p_data)
+        # random.shuffle()?        
+        np.random.shuffle(n_data)
+        np.random.shuffle(p_data)
         
         hcpevec = n_data.extend(p_data)
-        
+        '''
         '''
         for i in range(len(self.data)):
             for j in range(len(self.data)):
