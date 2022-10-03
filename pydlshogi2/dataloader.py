@@ -71,15 +71,13 @@ class HcpeDataLoader:
             
     def per_sort(self, hcpevec):
         hcpes = []
-        n_data = []
-        p_data = []
+        n_data = []  # priority = 0 のデータ
+        p_data = []  # priority = 1 のデータ
         
         for i, hcpe in enumerate(hcpevec):
             self.board.set_hcp(hcpe['hcp'])
             self.priority[i] = make_priority(hcpe['eval'], hcpe['gameResult'], self.board.turn)
             hcpes.extend(hcpe)
-            # hcpes.append(hcpe)
-            # hcpes[i] = hcpe
             
             if self.priority[i] == 0:
                 n_data.extend(hcpe)
@@ -93,8 +91,6 @@ class HcpeDataLoader:
         '''
         priority_sort = sorted(self.priority)
         
-        n_data = []  #priority = 0 のデータ
-        p_data = []  #priority = 1 のデータ
         i = 0
         j = 0
         
@@ -109,11 +105,7 @@ class HcpeDataLoader:
                 # p_data.append(hcpes[k])
                 p_data[j] = hcpes[k]
                 j += 1
-        # random.shuffle()?        
-        np.random.shuffle(n_data)
-        np.random.shuffle(p_data)
-        
-        hcpevec = n_data.extend(p_data)
+       
         '''
         '''
         for i in range(len(self.data)):
@@ -249,6 +241,7 @@ class HcpeDataLoader:
     
 
     def pre_fetch(self):
+        # ミニバッチ
         hcpevec = self.data[self.i:self.i+self.batch_size]
         self.i += self.batch_size
         if len(hcpevec) < self.batch_size:
