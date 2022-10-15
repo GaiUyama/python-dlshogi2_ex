@@ -73,7 +73,7 @@ class MCTSPlayer(BasePlayer):
     # USIエンジンの名前
     name = 're.python-dlshogi2'
     # デフォルトチェックポイント
-    DEFAULT_MODELFILE = 'checkpoints/ckpt-{2020_blocks_5}.pth'
+    DEFAULT_MODELFILE = 'checkpoints/checkpoint.pth'
 
     def __init__(self):
         super().__init__()
