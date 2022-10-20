@@ -38,6 +38,9 @@ class PolicyValueNetwork(nn.Module):
 
         # resnet blocks
         self.blocks = nn.Sequential(*[ResNetBlock(channels) for _ in range(blocks)])
+        
+        # ブロック数
+        self.b_num = blocks
 
         # policy head
         self.policy_conv = nn.Conv2d(in_channels=channels, out_channels=MOVE_PLANES_NUM, kernel_size=1, bias=False)
