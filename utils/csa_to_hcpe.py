@@ -60,9 +60,11 @@ for file_list, f in zip([file_list_train, file_list_test], [f_train, f_test]):
                 # comments: 開始局面からの指し手のコメントのリスト
                 for i, (move, score, comment) in enumerate(zip(kif.moves, kif.scores, kif.comments)):
                     # 局面数固定
+                    '''
                     total = position_num + p
                     if total == 2400000:
                       break
+                    '''
                     
                     # 不正な指し手のある棋譜を除外
                     # is_legal(move): moveが合法手かチェック。真偽値を返す。
