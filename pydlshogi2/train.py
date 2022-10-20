@@ -34,6 +34,9 @@ else:
 model = PolicyValueNetwork()
 model.to(device)
 
+# ブロック数表示
+#logging.info('blocks={}'.format(model.b_num))
+
 # オプティマイザ
 optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.0001)
 
