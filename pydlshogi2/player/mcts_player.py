@@ -71,7 +71,7 @@ class EvalQueueElement:
 
 class MCTSPlayer(BasePlayer):
     # USIエンジンの名前
-    name = 're.python-dlshogi2'
+    name = 'python-dlshogi2_ex'
     # デフォルトチェックポイント
     DEFAULT_MODELFILE = 'checkpoints/checkpoint.pth'
 
