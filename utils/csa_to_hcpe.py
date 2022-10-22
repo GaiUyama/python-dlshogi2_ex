@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 POSNUM_BORDER = 1
 TRAIN_NUM = 2400000
-TEST_NUM = 266666
+TEST_NUM = TRAIN_NUM * 0.11111
 
 # glob.glob(args.csa_dir/**/*.csa) 
 # ファイルパスをリストとして取得
