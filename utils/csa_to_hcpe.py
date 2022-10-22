@@ -15,6 +15,10 @@ parser.add_argument('--filter_rating', type=int, default=3500)
 parser.add_argument('--test_ratio', type=float, default=0.1)
 args = parser.parse_args()
 
+POSNUM_BORDER = 1
+TRAIN_NUM = 2400000
+TEST_NUM = 266666
+
 # glob.glob(args.csa_dir/**/*.csa) 
 # ファイルパスをリストとして取得
 # **: 同一階層以外のファイルを探す, recursive=True: ファイルを再帰的に探す
@@ -29,6 +33,8 @@ hcpes = np.zeros(1024, HuffmanCodedPosAndEval)
 # 'wb': バイナリファイルを書き込みモードで開く
 f_train = open(args.hcpe_train, 'wb')
 f_test = open(args.hcpe_test, 'wb')
+
+flag = 0
 
 board = Board()
 # zip(): file_list = [file_list_train, file_list_test], f = [f_train, f_test]
@@ -60,6 +66,17 @@ for file_list, f in zip([file_list_train, file_list_test], [f_train, f_test]):
                 # comments: 開始局面からの指し手のコメントのリスト
                 for i, (move, score, comment) in enumerate(zip(kif.moves, kif.scores, kif.comments)):
                     # 局面数固定
+                    if POSNUM_BORDER == 1:
+                      total = position_num + p
+                      if flag <= TRAIN_NUM:
+                        if total == TRAIN_NUM:
+                          break
+                      else:
+                        if total == TEST_NUM:
+                          break
+                      flag += 1
+                                    
+                    # 訓練局面数固定
                     '''
                     total = position_num + p
                     if total == 2400000:
