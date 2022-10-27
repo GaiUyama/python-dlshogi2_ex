@@ -15,7 +15,7 @@ parser.add_argument('--filter_rating', type=int, default=3500)
 parser.add_argument('--test_ratio', type=float, default=0.1)
 args = parser.parse_args()
 
-POSNUM_BORDER = 1
+POSNUM_BORDER = 0
 TRAIN_NUM = 2400000
 TEST_NUM = TRAIN_NUM * 0.11111
 
